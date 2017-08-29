@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 const plugin = (editor) => {
   editor.on('init', () => {
     setSticky();
