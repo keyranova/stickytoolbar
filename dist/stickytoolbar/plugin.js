@@ -77,6 +77,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 var plugin = function plugin(editor) {
+  var offset = editor.settings.sticky_offset ? editor.settings.sticky_offset : 0;
+
   editor.on('init', function () {
     setSticky();
   });
@@ -119,7 +121,7 @@ var plugin = function plugin(editor) {
           if (menubar) {
             menubar.style.bottom = null;
 
-            menubar.style.top = 0;
+            menubar.style.top = offset + 'px';
             menubar.style.position = 'fixed';
             menubar.style.width = container.clientWidth + 'px';
             menubar.style.backgroundColor = '#f0f0f0';
@@ -127,7 +129,7 @@ var plugin = function plugin(editor) {
 
           toolbar.style.bottom = null;
 
-          toolbar.style.top = (menubar ? menubar.offsetHeight : 0) + 'px';
+          toolbar.style.top = (menubar ? menubar.offsetHeight + offset : offset) + 'px';
           toolbar.style.position = 'fixed';
           toolbar.style.width = container.clientWidth + 'px';
           toolbar.style.borderBottom = '1px solid rgba(0, 0, 0, 0.2)';
@@ -152,7 +154,7 @@ var plugin = function plugin(editor) {
   function isSticky() {
     var editorPosition = editor.getContainer().getBoundingClientRect().top;
 
-    if (editorPosition < 0) {
+    if (editorPosition < offset) {
       return true;
     }
 
@@ -171,7 +173,7 @@ var plugin = function plugin(editor) {
 
     var stickyHeight = -(container.offsetHeight - menubarHeight - statusbarHeight - toolbarHeight);
 
-    if (editorPosition < stickyHeight) {
+    if (editorPosition < stickyHeight + offset) {
       return true;
     }
 
