@@ -2,6 +2,8 @@
 
 Welcome stranger! This is a repo containing the stickytoolbar TinyMCE plugin.
 
+Have a large amount of content in your wysiwyg editor and hate having to scroll up use the toolbar buttons? This is trying to solve that.
+
 ## The development server
 
 By running the `npm start` command you start the development server and open a browser window with an instance of TinyMCE with your plugin added to it. This window will reload automatically whenever a change is detected in the `index.html` file in the `static` folder or in one of the JavaScript files in the `src` directory.
