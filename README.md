@@ -2,7 +2,7 @@
 
 Welcome stranger! This is a repo containing the stickytoolbar TinyMCE plugin.
 
-Have a large amount of content in your wysiwyg editor and hate having to scroll up use the toolbar buttons? This is trying to solve that.
+Have a large amount of content in your wysiwyg editor and hate having to scroll up to use the toolbar buttons? This is trying to solve that.
 
 ## The development server
 
