@@ -10,9 +10,10 @@ const plugin = (editor) => {
   });
 
   function setSticky() {
-    if (!editor.inline) {
-      const container = editor.getContainer(),
-        menubar = container.querySelector('.mce-menubar'),
+    const container = editor.getContainer();
+
+    if (!editor.inline && container && container.offsetParent) {
+      const menubar = container.querySelector('.mce-menubar'),
         statusbar = container.querySelector('.mce-statusbar'),
         toolbar = container.querySelector('.mce-toolbar-grp');
 

@@ -88,9 +88,10 @@ var plugin = function plugin(editor) {
   });
 
   function setSticky() {
-    if (!editor.inline) {
-      var container = editor.getContainer(),
-          menubar = container.querySelector('.mce-menubar'),
+    var container = editor.getContainer();
+
+    if (!editor.inline && container && container.offsetParent) {
+      var menubar = container.querySelector('.mce-menubar'),
           statusbar = container.querySelector('.mce-statusbar'),
           toolbar = container.querySelector('.mce-toolbar-grp');
 
