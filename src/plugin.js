@@ -13,9 +13,6 @@ const plugin = (editor) => {
     const container = editor.getContainer();
 
     if (!editor.inline && container && container.offsetParent) {
-      // const menubar = container.querySelector('.mce-menubar'),
-    //     statusbar = container.querySelector('.mce-statusbar'),
-    //     toolbar = container.querySelector('.mce-toolbar-grp');
 
       let statusbar = '';
 
@@ -26,51 +23,19 @@ const plugin = (editor) => {
       const topPart = container.querySelector('.mce-top-part');
 
       if (isSticky()) {
-    //     if (menubar) {
-    //       container.style.paddingTop = `${toolbar.offsetHeight + menubar.offsetHeight}px`;
-    //     } else {
-    //       container.style.paddingTop = `${toolbar.offsetHeight}px`;
-    //     }
+        container.style.paddingTop = `${topPart.offsetHeight}px`;
 
-    //     if (isAtBottom()) {
-    //       if (menubar) {
-    //         menubar.style.top = null;
-    //         menubar.style.borderBottom = null;
-
-    //         menubar.style.width = '100%';
-    //         menubar.style.position = 'absolute';
-
-    //         if (statusbar) {
-    //           menubar.style.bottom = `${statusbar.offsetHeight + toolbar.offsetHeight}px`;
-    //         } else {
-    //           menubar.style.bottom = `${toolbar.offsetHeight}px`;
-    //         }
-    //       }
-
-    //       toolbar.style.top = null;
-    //       toolbar.style.borderBottom = null;
-
-    //       toolbar.style.width = '100%';
-    //       toolbar.style.position = 'absolute';
-
-    //       toolbar.style.bottom = statusbar ? `${statusbar.offsetHeight}px` : 0;
-    //     } else {
-    //       if (menubar) {
-    //         menubar.style.bottom = null;
-
-    //         menubar.style.top = `${offset}px`;
-    //         menubar.style.position = 'fixed';
-    //         menubar.style.width = `${container.clientWidth}px`;
-    //         menubar.style.backgroundColor = '#f0f0f0';
-    //       }
-
-    //       toolbar.style.bottom = null;
-
-    //       toolbar.style.top = `${menubar ? (menubar.offsetHeight + offset) : offset}px`;
-    //       toolbar.style.position = 'fixed';
-    //       toolbar.style.width = `${container.clientWidth}px`;
-    //       toolbar.style.borderBottom = '1px solid rgba(0, 0, 0, 0.2)';
-    //     }
+        if (isAtBottom()) {
+          topPart.style.top = null;
+          topPart.style.width = '100%';
+          topPart.style.position = 'absolute';
+          topPart.style.bottom = statusbar ? `${statusbar.offsetHeight}px` : 0;
+        } else {
+          topPart.style.bottom = null;
+          topPart.style.top = `${offset}px`;
+          topPart.style.position = 'fixed';
+          topPart.style.width = `${container.clientWidth}px`;
+        }
       } else {
         container.style.paddingTop = 0;
 
@@ -93,21 +58,20 @@ const plugin = (editor) => {
   }
 
   function isAtBottom() {
-    // const container = editor.getContainer(),
-    //   editorPosition = container.getBoundingClientRect().top,
-    //   menubar = container.querySelector('.mce-menubar'),
-    //   statusbar = container.querySelector('.mce-statusbar'),
-    //   toolbar = container.querySelector('.mce-toolbar-grp');
+    const container = editor.getContainer();
 
-    // const menubarHeight = menubar ? menubar.offsetHeight : 0,
-    //   statusbarHeight = statusbar ? statusbar.offsetHeight : 0,
-    //   toolbarHeight = toolbar ? toolbar.offsetHeight : 0;
+    const editorPosition = container.getBoundingClientRect().top,
+      statusbar = container.querySelector('.mce-statusbar'),
+      topPart = container.querySelector('.mce-top-part');
 
-    // const stickyHeight = -(container.offsetHeight - menubarHeight - statusbarHeight - toolbarHeight);
+    const statusbarHeight = statusbar ? statusbar.offsetHeight : 0,
+      topPartHeight = topPart ? topPart.offsetHeight : 0;
 
-    // if (editorPosition < stickyHeight + offset) {
-    //   return true;
-    // }
+    const stickyHeight = -(container.offsetHeight - topPartHeight - statusbarHeight);
+
+    if (editorPosition < stickyHeight + offset) {
+      return true;
+    }
 
     return false;
   }
