@@ -91,63 +91,36 @@ var plugin = function plugin(editor) {
     var container = editor.getContainer();
 
     if (!editor.inline && container && container.offsetParent) {
-      var menubar = container.querySelector('.mce-menubar'),
-          statusbar = container.querySelector('.mce-statusbar'),
-          toolbar = container.querySelector('.mce-toolbar-grp');
+
+      var statusbar = '';
+
+      if (editor.settings.statusbar !== false) {
+        statusbar = container.querySelector('.mce-statusbar');
+      }
+
+      var topPart = container.querySelector('.mce-top-part');
 
       if (isSticky()) {
-        if (menubar) {
-          container.style.paddingTop = toolbar.offsetHeight + menubar.offsetHeight + 'px';
-        } else {
-          container.style.paddingTop = toolbar.offsetHeight + 'px';
-        }
+        container.style.paddingTop = topPart.offsetHeight + 'px';
 
         if (isAtBottom()) {
-          if (menubar) {
-            menubar.style.top = null;
-            menubar.style.borderBottom = null;
-
-            menubar.style.bottom = statusbar.offsetHeight + toolbar.offsetHeight + 'px';
-            menubar.style.position = 'absolute';
-            menubar.style.width = '100%';
-          }
-
-          toolbar.style.top = null;
-          toolbar.style.borderBottom = null;
-
-          toolbar.style.bottom = statusbar.offsetHeight + 'px';
-          toolbar.style.position = 'absolute';
-          toolbar.style.width = '100%';
+          topPart.style.top = null;
+          topPart.style.width = '100%';
+          topPart.style.position = 'absolute';
+          topPart.style.bottom = statusbar ? statusbar.offsetHeight + 'px' : 0;
         } else {
-          if (menubar) {
-            menubar.style.bottom = null;
-
-            menubar.style.top = offset + 'px';
-            menubar.style.position = 'fixed';
-            menubar.style.width = container.clientWidth + 'px';
-            menubar.style.backgroundColor = '#f0f0f0';
-          }
-
-          toolbar.style.bottom = null;
-
-          toolbar.style.top = (menubar ? menubar.offsetHeight + offset : offset) + 'px';
-          toolbar.style.position = 'fixed';
-          toolbar.style.width = container.clientWidth + 'px';
-          toolbar.style.borderBottom = '1px solid rgba(0, 0, 0, 0.2)';
+          topPart.style.bottom = null;
+          topPart.style.top = offset + 'px';
+          topPart.style.position = 'fixed';
+          topPart.style.width = container.clientWidth + 'px';
         }
       } else {
         container.style.paddingTop = 0;
 
-        if (menubar) {
-          menubar.style.position = 'relative';
-          menubar.style.top = null;
-          menubar.style.width = null;
-          menubar.style.borderBottom = null;
-        }
-        toolbar.style.position = 'relative';
-        toolbar.style.top = null;
-        toolbar.style.width = null;
-        toolbar.style.borderBottom = null;
+        topPart.style.position = 'relative';
+        topPart.style.top = null;
+        topPart.style.width = null;
+        topPart.style.borderBottom = null;
       }
     }
   }
@@ -163,16 +136,16 @@ var plugin = function plugin(editor) {
   }
 
   function isAtBottom() {
-    var container = editor.getContainer(),
-        editorPosition = container.getBoundingClientRect().top,
-        menubar = container.querySelector('.mce-menubar');
+    var container = editor.getContainer();
 
-    var statusbarHeight = container.querySelector('.mce-statusbar').offsetHeight,
-        toolbarHeight = container.querySelector('.mce-toolbar-grp').offsetHeight;
+    var editorPosition = container.getBoundingClientRect().top,
+        statusbar = container.querySelector('.mce-statusbar'),
+        topPart = container.querySelector('.mce-top-part');
 
-    var menubarHeight = menubar ? menubar.offsetHeight : 0;
+    var statusbarHeight = statusbar ? statusbar.offsetHeight : 0,
+        topPartHeight = topPart ? topPart.offsetHeight : 0;
 
-    var stickyHeight = -(container.offsetHeight - menubarHeight - statusbarHeight - toolbarHeight);
+    var stickyHeight = -(container.offsetHeight - topPartHeight - statusbarHeight);
 
     if (editorPosition < stickyHeight + offset) {
       return true;
