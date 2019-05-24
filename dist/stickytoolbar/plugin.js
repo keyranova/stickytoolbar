@@ -33,18 +33,35 @@
 /******/ 	// expose the module cache
 /******/ 	__webpack_require__.c = installedModules;
 /******/
-/******/ 	// identity function for calling harmony imports with the correct context
-/******/ 	__webpack_require__.i = function(value) { return value; };
-/******/
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -62,65 +79,78 @@
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var plugin = function plugin(editor) {
+// CONCATENATED MODULE: ./src/plugin.js
+var plugin_plugin = function plugin(editor) {
   var offset = editor.settings.sticky_offset ? editor.settings.sticky_offset : 0;
-
   editor.on('init', function () {
+    setTimeout(function () {
+      setSticky();
+    }, 0);
+  });
+  window.addEventListener('resize', function () {
     setSticky();
   });
-
   window.addEventListener('scroll', function () {
     setSticky();
   });
 
   function setSticky() {
     var container = editor.getContainer();
+    var toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
+    var toolbarHeights = 0;
+    toolbars.forEach(function (toolbar) {
+      toolbarHeights += toolbar.offsetHeight;
+    });
 
     if (!editor.inline && container && container.offsetParent) {
-
       var statusbar = '';
 
       if (editor.settings.statusbar !== false) {
-        statusbar = container.querySelector('.mce-statusbar');
+        statusbar = container.querySelector('.tox-statusbar');
       }
 
-      var topPart = container.querySelector('.mce-top-part');
-
       if (isSticky()) {
-        container.style.paddingTop = topPart.offsetHeight + 'px';
+        container.style.paddingTop = "".concat(toolbarHeights, "px");
 
         if (isAtBottom()) {
-          topPart.style.top = null;
-          topPart.style.width = '100%';
-          topPart.style.position = 'absolute';
-          topPart.style.bottom = statusbar ? statusbar.offsetHeight + 'px' : 0;
+          var nextToolbarHeight = 0;
+          var toolbarsArray = [].slice.call(toolbars).reverse();
+          toolbarsArray.forEach(function (toolbar) {
+            toolbar.style.top = null;
+            toolbar.style.width = '100%';
+            toolbar.style.position = 'absolute';
+            toolbar.style.bottom = statusbar ? "".concat(statusbar.offsetHeight + nextToolbarHeight, "px") : 0;
+            toolbar.style.zIndex = 1;
+            nextToolbarHeight = toolbar.offsetHeight;
+          });
         } else {
-          topPart.style.bottom = null;
-          topPart.style.top = offset + 'px';
-          topPart.style.position = 'fixed';
-          topPart.style.width = container.clientWidth + 'px';
+          var prevToolbarHeight = 0;
+          toolbars.forEach(function (toolbar) {
+            toolbar.style.bottom = null;
+            toolbar.style.top = "".concat(offset + prevToolbarHeight, "px");
+            toolbar.style.position = 'fixed';
+            toolbar.style.width = "".concat(container.clientWidth, "px");
+            toolbar.style.zIndex = 1;
+            prevToolbarHeight = toolbar.offsetHeight;
+          });
         }
       } else {
         container.style.paddingTop = 0;
-
-        topPart.style.position = 'relative';
-        topPart.style.top = null;
-        topPart.style.width = null;
-        topPart.style.borderBottom = null;
+        toolbars.forEach(function (toolbar) {
+          toolbar.style = null;
+        });
       }
     }
   }
@@ -137,15 +167,15 @@ var plugin = function plugin(editor) {
 
   function isAtBottom() {
     var container = editor.getContainer();
-
     var editorPosition = container.getBoundingClientRect().top,
-        statusbar = container.querySelector('.mce-statusbar'),
-        topPart = container.querySelector('.mce-top-part');
-
-    var statusbarHeight = statusbar ? statusbar.offsetHeight : 0,
-        topPartHeight = topPart ? topPart.offsetHeight : 0;
-
-    var stickyHeight = -(container.offsetHeight - topPartHeight - statusbarHeight);
+        statusbar = container.querySelector('.tox-statusbar'),
+        toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
+    var statusbarHeight = statusbar ? statusbar.offsetHeight : 0;
+    var toolbarHeights = 0;
+    toolbars.forEach(function (toolbar) {
+      toolbarHeights += toolbar.offsetHeight;
+    });
+    var stickyHeight = -(container.offsetHeight - toolbarHeights - statusbarHeight);
 
     if (editorPosition < stickyHeight + offset) {
       return true;
@@ -155,22 +185,10 @@ var plugin = function plugin(editor) {
   }
 };
 
-exports.default = plugin;
+/* harmony default export */ var src_plugin = (plugin_plugin);
+// CONCATENATED MODULE: ./src/index.js
 
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var _plugin = __webpack_require__(0);
-
-var _plugin2 = _interopRequireDefault(_plugin);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-tinymce.PluginManager.add('stickytoolbar', _plugin2.default);
+tinymce.PluginManager.add('stickytoolbar', src_plugin);
 
 /***/ })
 /******/ ]);
