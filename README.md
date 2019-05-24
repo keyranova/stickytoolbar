@@ -4,7 +4,7 @@ Have a large amount of content in your wysiwyg editor and hate having to scroll 
 
 ### Versions:
 - latest version is for TinyMCE 5
-- version 1.2.0 is form TinyMCE < 5
+- version 1.2.0 is for TinyMCE < 5
 
 ### Options:
 - sticky_offset: By default the toolbar sticks to the top of the viewport, increase this number so the toolbar can stick below any fixed elements such as a header.
