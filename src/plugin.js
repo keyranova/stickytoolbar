@@ -2,6 +2,12 @@ const plugin = (editor) => {
   const offset = editor.settings.sticky_offset ? editor.settings.sticky_offset : 0;
 
   editor.on('init', () => {
+    setTimeout(() => {
+      setSticky();
+    }, 0);
+  });
+
+  window.addEventListener('resize', () => {
     setSticky();
   });
 
@@ -12,37 +18,55 @@ const plugin = (editor) => {
   function setSticky() {
     const container = editor.getContainer();
 
-    if (!editor.inline && container && container.offsetParent) {
+    const toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
+    let toolbarHeights = 0;
+    toolbars.forEach(toolbar => {
+      toolbarHeights += toolbar.offsetHeight;
+    });
 
+    if (!editor.inline && container && container.offsetParent) {
       let statusbar = '';
 
       if (editor.settings.statusbar !== false) {
-        statusbar = container.querySelector('.mce-statusbar');
+        statusbar = container.querySelector('.tox-statusbar');
       }
 
-      const topPart = container.querySelector('.mce-top-part');
-
       if (isSticky()) {
-        container.style.paddingTop = `${topPart.offsetHeight}px`;
+        container.style.paddingTop = `${toolbarHeights}px`;
 
         if (isAtBottom()) {
-          topPart.style.top = null;
-          topPart.style.width = '100%';
-          topPart.style.position = 'absolute';
-          topPart.style.bottom = statusbar ? `${statusbar.offsetHeight}px` : 0;
+          let nextToolbarHeight = 0;
+
+          const toolbarsArray = [].slice.call(toolbars).reverse();
+
+          toolbarsArray.forEach(toolbar => {
+            toolbar.style.top = null;
+            toolbar.style.width = '100%';
+            toolbar.style.position = 'absolute';
+            toolbar.style.bottom = statusbar ? `${statusbar.offsetHeight + nextToolbarHeight}px` : 0;
+            toolbar.style.zIndex = 1;
+
+            nextToolbarHeight = toolbar.offsetHeight;
+          });
         } else {
-          topPart.style.bottom = null;
-          topPart.style.top = `${offset}px`;
-          topPart.style.position = 'fixed';
-          topPart.style.width = `${container.clientWidth}px`;
+          let prevToolbarHeight = 0;
+
+          toolbars.forEach(toolbar => {
+            toolbar.style.bottom = null;
+            toolbar.style.top = `${offset + prevToolbarHeight}px`;
+            toolbar.style.position = 'fixed';
+            toolbar.style.width = `${container.clientWidth}px`;
+            toolbar.style.zIndex = 1;
+
+            prevToolbarHeight = toolbar.offsetHeight;
+          });
         }
       } else {
         container.style.paddingTop = 0;
 
-        topPart.style.position = 'relative';
-        topPart.style.top = null;
-        topPart.style.width = null;
-        topPart.style.borderBottom = null;
+        toolbars.forEach(toolbar => {
+          toolbar.style = null;
+        });
       }
     }
   }
@@ -61,13 +85,17 @@ const plugin = (editor) => {
     const container = editor.getContainer();
 
     const editorPosition = container.getBoundingClientRect().top,
-      statusbar = container.querySelector('.mce-statusbar'),
-      topPart = container.querySelector('.mce-top-part');
+      statusbar = container.querySelector('.tox-statusbar'),
+      toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
 
-    const statusbarHeight = statusbar ? statusbar.offsetHeight : 0,
-      topPartHeight = topPart ? topPart.offsetHeight : 0;
+    const statusbarHeight = statusbar ? statusbar.offsetHeight : 0;
 
-    const stickyHeight = -(container.offsetHeight - topPartHeight - statusbarHeight);
+    let toolbarHeights = 0;
+    toolbars.forEach(toolbar => {
+      toolbarHeights += toolbar.offsetHeight;
+    });
+
+    const stickyHeight = -(container.offsetHeight - toolbarHeights - statusbarHeight);
 
     if (editorPosition < stickyHeight + offset) {
       return true;
