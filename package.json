@@ -2,12 +2,17 @@
   "name": "stickytoolbar",
   "version": "0.0.1",
   "description": "stickytoolbar TinyMCE plugin repo",
+  "main": "./dist/plugin.min.js",
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.config.dev.js --progress --open --inline",
     "lint": "eslint 'src/**/*.js'",
     "build": "webpack --config config/webpack.config.prod.js --progress"
   },
-  "author": "",
+  "author": "Kurt Novack",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kurtnovack/stickytoolbar"
+  },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",
