@@ -3,7 +3,7 @@
 Have a large amount of content in your wysiwyg editor and hate having to scroll up to use the toolbar buttons? This is trying to solve that.
 
 ### Versions:
-- latest version if for TinyMCE 5
+- latest version is for TinyMCE 5
 - version 1.2.0 is form TinyMCE < 5
 
 ### Options:
