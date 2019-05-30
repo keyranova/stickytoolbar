@@ -1,6 +1,6 @@
 {
   "name": "stickytoolbar",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "stickytoolbar TinyMCE plugin repo",
   "main": "./dist/plugin.min.js",
   "scripts": {
