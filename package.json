@@ -1,6 +1,6 @@
 {
   "name": "stickytoolbar",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "stickytoolbar TinyMCE plugin repo",
   "scripts": {
     "start": "webpack-dev-server --config config/webpack.config.dev.js --progress --open --inline",
