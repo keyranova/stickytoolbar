@@ -1,5 +1,19 @@
 const plugin = (editor) => {
-  const offset = editor.settings.sticky_offset ? editor.settings.sticky_offset : 0;
+  const offset = editor.settings.sticky_offset ?
+    editor.settings.sticky_offset :
+    0;
+
+  const stickyToolbar = editor.settings.sticky_toolbar_container ?
+    editor.settings.sticky_toolbar_container :
+    '.tox-toolbar';
+
+  const stickyMenu = editor.settings.sticky_menubar_container ?
+    editor.settings.sticky_menubar_container :
+    '.tox-menubar';
+
+  const stickyStatus = editor.settings.sticky_statusbar_container ?
+    editor.settings.sticky_statusbar_container :
+    '.tox-statusbar';
 
   editor.on('init', () => {
     setTimeout(() => {
@@ -18,7 +32,7 @@ const plugin = (editor) => {
   function setSticky() {
     const container = editor.getContainer();
 
-    const toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
+    const toolbars = container.querySelectorAll(`${stickyToolbar}, ${stickyMenu}`);
     let toolbarHeights = 0;
     toolbars.forEach(toolbar => {
       toolbarHeights += toolbar.offsetHeight;
@@ -28,7 +42,7 @@ const plugin = (editor) => {
       let statusbar = '';
 
       if (editor.settings.statusbar !== false) {
-        statusbar = container.querySelector('.tox-statusbar');
+        statusbar = container.querySelector(stickyStatus);
       }
 
       if (isSticky()) {
@@ -85,8 +99,8 @@ const plugin = (editor) => {
     const container = editor.getContainer();
 
     const editorPosition = container.getBoundingClientRect().top,
-      statusbar = container.querySelector('.tox-statusbar'),
-      toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
+      statusbar = container.querySelector(stickyStatus),
+      toolbars = container.querySelectorAll(`${stickyToolbar}, ${stickyMenu}`);
 
     const statusbarHeight = statusbar ? statusbar.offsetHeight : 0;
 
