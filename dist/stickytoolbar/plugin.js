@@ -94,6 +94,11 @@ __webpack_require__.r(__webpack_exports__);
 // CONCATENATED MODULE: ./src/plugin.js
 var plugin_plugin = function plugin(editor) {
   var offset = editor.settings.sticky_offset ? editor.settings.sticky_offset : 0;
+  var stickyToolbar = editor.settings.sticky_toolbar_container ? editor.settings.sticky_toolbar_container : '.tox-toolbar';
+  var stickyMenu = editor.settings.sticky_menubar_container ? editor.settings.sticky_menubar_container : '.tox-menubar';
+  var stickyStatus = editor.settings.sticky_statusbar_container ? editor.settings.sticky_statusbar_container : '.tox-statusbar';
+  var stickyParentClass = editor.settings.sticky_scrolling_container ? editor.settings.sticky_scrolling_container : null;
+  var stickyParent = document.querySelector(stickyParentClass);
   editor.on('init', function () {
     setTimeout(function () {
       setSticky();
@@ -102,13 +107,20 @@ var plugin_plugin = function plugin(editor) {
   window.addEventListener('resize', function () {
     setSticky();
   });
+
+  if (stickyParent) {
+    stickyParent.addEventListener('scroll', function () {
+      setSticky();
+    });
+  }
+
   window.addEventListener('scroll', function () {
     setSticky();
   });
 
   function setSticky() {
     var container = editor.getContainer();
-    var toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
+    var toolbars = container.querySelectorAll("".concat(stickyToolbar, ", ").concat(stickyMenu));
     var toolbarHeights = 0;
     toolbars.forEach(function (toolbar) {
       toolbarHeights += toolbar.offsetHeight;
@@ -118,7 +130,7 @@ var plugin_plugin = function plugin(editor) {
       var statusbar = '';
 
       if (editor.settings.statusbar !== false) {
-        statusbar = container.querySelector('.tox-statusbar');
+        statusbar = container.querySelector(stickyStatus);
       }
 
       if (isSticky()) {
@@ -139,7 +151,20 @@ var plugin_plugin = function plugin(editor) {
           var prevToolbarHeight = 0;
           toolbars.forEach(function (toolbar) {
             toolbar.style.bottom = null;
-            toolbar.style.top = "".concat(offset + prevToolbarHeight, "px");
+
+            if (stickyParent) {
+              var parentTop = stickyParent.getBoundingClientRect().top,
+                  parentOffset = parentTop > 0 ? parentTop : 0;
+
+              if (offset && parentTop <= offset) {
+                toolbar.style.top = "".concat(offset + prevToolbarHeight, "px");
+              } else {
+                toolbar.style.top = "".concat(parentOffset + prevToolbarHeight, "px");
+              }
+            } else {
+              toolbar.style.top = "".concat(offset + prevToolbarHeight, "px");
+            }
+
             toolbar.style.position = 'fixed';
             toolbar.style.width = "".concat(container.clientWidth, "px");
             toolbar.style.zIndex = 1;
@@ -158,8 +183,15 @@ var plugin_plugin = function plugin(editor) {
   function isSticky() {
     var editorPosition = editor.getContainer().getBoundingClientRect().top;
 
-    if (editorPosition < offset) {
+    if (!stickyParent && editorPosition < offset) {
       return true;
+    } else if (stickyParent) {
+      var parentTop = stickyParent.getBoundingClientRect().top,
+          relativeTop = editorPosition - parentTop;
+
+      if (relativeTop < 0 || parentTop < (offset || 0)) {
+        return true;
+      }
     }
 
     return false;
@@ -168,8 +200,8 @@ var plugin_plugin = function plugin(editor) {
   function isAtBottom() {
     var container = editor.getContainer();
     var editorPosition = container.getBoundingClientRect().top,
-        statusbar = container.querySelector('.tox-statusbar'),
-        toolbars = container.querySelectorAll('.tox-menubar, .tox-toolbar');
+        statusbar = container.querySelector(stickyStatus),
+        toolbars = container.querySelectorAll("".concat(stickyToolbar, ", ").concat(stickyMenu));
     var statusbarHeight = statusbar ? statusbar.offsetHeight : 0;
     var toolbarHeights = 0;
     toolbars.forEach(function (toolbar) {
