@@ -8,6 +8,7 @@ Have a large amount of content in your wysiwyg editor and hate having to scroll 
 
 ### Options:
 - sticky_offset: By default the toolbar sticks to the top of the viewport, increase this number so the toolbar can stick below any fixed elements such as a header.
+- sticky_scrolling_container: to stick the toolbar to the top of a parent container with overflow: auto
 - If your implementation has different classes:
   - sticky_toolbar_container
   - sticky_menubar_container
@@ -18,6 +19,7 @@ tinymce.init({
   selector:'textarea',
   plugins: 'stickytoolbar',
   sticky_offset: 80,
+  sticky_scrolling_container: '.your-parent-container',
   sticky_toolbar_container: '.tox-toolbar',
   sticky_menubar_container: '.tox-menubar',
   sticky_statusbar_container: '.tox-statusbar'

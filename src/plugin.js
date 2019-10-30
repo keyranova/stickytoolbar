@@ -15,6 +15,11 @@ const plugin = (editor) => {
     editor.settings.sticky_statusbar_container :
     '.tox-statusbar';
 
+  const stickyParentClass = editor.settings.sticky_scrolling_container ?
+    editor.settings.sticky_scrolling_container :
+    null;
+  const stickyParent = document.querySelector(stickyParentClass);
+
   editor.on('init', () => {
     setTimeout(() => {
       setSticky();
@@ -24,6 +29,12 @@ const plugin = (editor) => {
   window.addEventListener('resize', () => {
     setSticky();
   });
+
+  if (stickyParent) {
+    stickyParent.addEventListener('scroll', () => {
+      setSticky();
+    });
+  }
 
   window.addEventListener('scroll', () => {
     setSticky();
@@ -67,7 +78,20 @@ const plugin = (editor) => {
 
           toolbars.forEach(toolbar => {
             toolbar.style.bottom = null;
-            toolbar.style.top = `${offset + prevToolbarHeight}px`;
+
+            if (stickyParent) {
+              const parentTop = stickyParent.getBoundingClientRect().top,
+                parentOffset = parentTop > 0 ? parentTop : 0;
+
+              if (offset && parentTop <= offset) {
+                toolbar.style.top = `${offset + prevToolbarHeight}px`;
+              } else {
+                toolbar.style.top = `${parentOffset + prevToolbarHeight}px`;
+              }
+            } else {
+              toolbar.style.top = `${offset + prevToolbarHeight}px`;
+            }
+
             toolbar.style.position = 'fixed';
             toolbar.style.width = `${container.clientWidth}px`;
             toolbar.style.zIndex = 1;
@@ -88,8 +112,15 @@ const plugin = (editor) => {
   function isSticky() {
     const editorPosition = editor.getContainer().getBoundingClientRect().top;
 
-    if (editorPosition < offset) {
+    if (!stickyParent && editorPosition < offset) {
       return true;
+    } else if (stickyParent) {
+      const parentTop = stickyParent.getBoundingClientRect().top,
+        relativeTop = editorPosition - parentTop;
+
+      if (relativeTop < 0 || parentTop < (offset || 0)) {
+        return true;
+      }
     }
 
     return false;

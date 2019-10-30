@@ -4,10 +4,18 @@
   <script src="https://cloud.tinymce.com/5/tinymce.min.js"></script>
   <script>
     tinymce.init({
-      selector:'textarea',
+      selector: '#standard',
       height: 800,
       plugins: 'stickytoolbar',
       sticky_offset: 80
+    });
+
+    tinymce.init({
+      selector: '#parent',
+      height: 800,
+      plugins: 'stickytoolbar',
+      sticky_offset: 80,
+      sticky_scrolling_container: '.parent-container'
     });
   </script>
   <style>
@@ -25,13 +33,26 @@
       left: 0;
       z-index: 2;
     }
+    .parent-container {
+      height: 400px;
+      overflow: auto;
+      position: relative;
+    }
   </style>
 </head>
 <body>
   <header>
     <p>Fixed header to test 'sticky_offset' option</p>
   </header>
-  <textarea>Testing stickytoolbar</textarea>
+
+  <h2>Stick to viewport top</h2>
+  <textarea id="standard">Testing stickytoolbar</textarea>
+
+  <h2>Stick to parent container</h2>
+  <div class="parent-container">
+    <textarea id="parent">Testing stickytoolbar</textarea>
+  </div>
+
   <h1>Pellentesque eget diam</h1>
   <p>
     Pellentesque vitae aliquet metus. Nullam at est vitae ex interdum tristique eget ut magna. Fusce a pharetra turpis. Sed
