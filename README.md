@@ -1,9 +1,11 @@
 # stickytoolbar TinyMCE Plugin
 
-## For users of TinyMCE 5.1 or greater
+**For users of TinyMCE 5.1 or greater:**
 - this plugin is no longer necessary since the `toolbar_sticky` setting has been added by default. I will keep this repo alive for anyone still using it, but move over to using that since they finally added it in as a feature.
 
-Have a large amount of content in your wysiwyg editor and hate having to scroll up to use the toolbar buttons? This is trying to solve that.
+
+**For users of TinyMCE below version 5.1:**
+- Have a large amount of content in your wysiwyg editor and hate having to scroll up to use the toolbar buttons? This is trying to solve that.
 
 ### Versions:
 - latest version is for TinyMCE 5
